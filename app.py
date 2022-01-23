@@ -1,10 +1,13 @@
 from crypt import methods
+import resource
 from urllib import response
 from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app, origins=["http://localhost:3000"], supports_credentials=True)
 
 # app.config.from_object(os.environ['APP_SETTINGS'])
 app.config.from_object("config.DevelopmentConfig")
