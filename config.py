@@ -7,7 +7,7 @@ class Config(object):
     CSRF_ENABLED = True
     SECRET_KEY = 'this-really-needs-to-be-changed'
     # SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
-    SQLALCHEMY_DATABASE_URI = "postgresql://postgres:Toilathang123@localhost:5432/cars_api"
+    SQLALCHEMY_DATABASE_URI = "postgresql://postgres:Toilathang123@localhost:5432/flash_card"
 
 
 class ProductionConfig(Config):

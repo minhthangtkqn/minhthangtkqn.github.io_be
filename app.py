@@ -7,13 +7,13 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:3000"], supports_credentials=True)
+CORS(app, origins=["http://localhost:3000", "http://localhost:3000/folder"], supports_credentials=True)
 
 # app.config.from_object(os.environ['APP_SETTINGS'])
 app.config.from_object("config.DevelopmentConfig")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
-migrate = Migrate(app, db)
+# migrate = Migrate(app, db)
 
 # ======================================================
 
@@ -44,6 +44,28 @@ class CarsModel(db.Model):
             'doors': self.doors
         }
 # CARS MODEL
+
+
+class FlashCardsModel(db.Model):
+    __tablename__ = 'card'
+
+    _id = db.Column(db.String(), primary_key=True)
+    name = db.Column(db.String())
+    description = db.Column(db.String())
+
+    def __init__(self, name, description):
+        self.name = name
+        self.description = description
+
+    def __repr__(self):
+        return f"<Flash card {self.name}>"
+
+    def serialize(self):
+        return {
+            '_id': self._id,
+            'name': self.name,
+            'description': self.description,
+        }
 
 
 @app.route("/")
@@ -113,6 +135,58 @@ def handle_car(car_id):
         db.session.delete(car)
         db.session.commit()
         return {"message": f"car {car.name} successfully deleted."}
+
+
+@app.route('/flash_cards', methods=['POST', 'GET'])
+def handle_cards():
+    if request.method == 'POST':
+        if request.is_json:
+            data = request.get_json()
+            new_card = FlashCardsModel(
+                name=data['name'],
+                description=data['description']
+            )
+            db.session.add(new_card)
+            db.session.commit()
+            return {"message": f"card {new_card.name} has been created successfully."}
+        else:
+            return {'error': 'The request payload is not in JSON format'}
+    elif request.method == 'GET':
+        cars = FlashCardsModel.query.all()
+        result = [{
+            "_id": car._id,
+            "name": car.name,
+            "description": car.description,
+        } for car in cars]
+
+        return {'count': len(result), 'cards': result}
+
+
+@app.route('/flash_card/<card_id>', methods=['GET', 'PUT', 'DELETE'])
+def handle_flash_card(card_id):
+    card = FlashCardsModel.query.get_or_404(card_id)
+
+    if request.method == 'GET':
+        response = {
+            "_id": card._id,
+            "name": card.name,
+            "description": card.description,
+        }
+        return {"message": "success", "flash card": response}
+
+    elif request.method == 'PUT':
+        data = request.get_json()
+        card.name = data['name']
+        card.description = data['description']
+        db.session.add(card)
+        db.session.commit()
+        return {"message": f"Card {card.name} successfully updated."}
+
+    elif request.method == 'DELETE':
+        db.session.delete(card)
+        db.session.commit()
+        return {"message": f"Card {card.name} successfully deleted."}
+
 
 if __name__ == '__main__':
     app.run()
