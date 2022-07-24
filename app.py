@@ -1,4 +1,5 @@
 from crypt import methods
+import logging
 import resource
 from urllib import response
 from flask import Flask, request
@@ -6,8 +7,11 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_cors import CORS
 
+logging.basicConfig(level=logging.INFO)
+
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:3000", "http://localhost:3000/folder"], supports_credentials=True)
+CORS(app, origins=["http://localhost:3000",
+     "http://localhost:3000/folder"], supports_credentials=True)
 
 # app.config.from_object(os.environ['APP_SETTINGS'])
 app.config.from_object("config.DevelopmentConfig")
@@ -53,7 +57,8 @@ class FlashCardsModel(db.Model):
     name = db.Column(db.String())
     description = db.Column(db.String())
 
-    def __init__(self, name, description):
+    def __init__(self, _id, name, description):
+        self._id = _id
         self.name = name
         self.description = description
 
@@ -139,10 +144,12 @@ def handle_car(car_id):
 
 @app.route('/flash_cards', methods=['POST', 'GET'])
 def handle_cards():
+    print('HANDLE FLASH CARDS POSTING')
     if request.method == 'POST':
         if request.is_json:
             data = request.get_json()
             new_card = FlashCardsModel(
+                _id=data['_id'],
                 name=data['name'],
                 description=data['description']
             )

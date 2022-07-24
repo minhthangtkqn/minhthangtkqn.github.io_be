@@ -1,13 +1,15 @@
 import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
+FLASH_CARD_DB_NAME = 'flash_card'
+
 class Config(object):
     DEBUG = False
     TESTING = False
     CSRF_ENABLED = True
     SECRET_KEY = 'this-really-needs-to-be-changed'
     # SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
-    SQLALCHEMY_DATABASE_URI = "postgresql://postgres:Toilathang123@localhost:5432/flash_card"
+    SQLALCHEMY_DATABASE_URI = "postgresql://postgres:Toilathang123@localhost:5432/{}".format(FLASH_CARD_DB_NAME)
 
 
 class ProductionConfig(Config):
