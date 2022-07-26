@@ -1,10 +1,7 @@
-from crypt import methods
 import logging
-import resource
-from urllib import response
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
+# from flask_migrate import Migrate
 from flask_cors import CORS
 
 logging.basicConfig(level=logging.INFO)
@@ -166,7 +163,10 @@ def handle_cards():
             "description": car.description,
         } for car in cars]
 
-        return {'count': len(result), 'cards': result}
+        if(type(result) is list):
+            print('BINGO')
+
+        return jsonify(result)
 
 
 @app.route('/flash_card/<card_id>', methods=['GET', 'PUT', 'DELETE'])
