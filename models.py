@@ -1,5 +1,3 @@
-# THIS FILE IS NOT USED, FOR NOW
-
 from app import db
 
 class CarsModel(db.Model):
@@ -17,11 +15,35 @@ class CarsModel(db.Model):
 
     def __repr__(self):
         return f"<Car {self.name}>"
-    
+
     def serialize(self):
         return {
-            'id': self.id, 
+            'id': self.id,
             'name': self.name,
             'model': self.model,
-            'doors':self.doors
+            'doors': self.doors
+        }
+# CARS MODEL
+
+
+class FlashCardsModel(db.Model):
+    __tablename__ = 'card'
+
+    _id = db.Column(db.String(), primary_key=True)
+    name = db.Column(db.String())
+    description = db.Column(db.String())
+
+    def __init__(self, _id, name, description):
+        self._id = _id
+        self.name = name
+        self.description = description
+
+    def __repr__(self):
+        return f"<Flash card {self.name}>"
+
+    def serialize(self):
+        return {
+            '_id': self._id,
+            'name': self.name,
+            'description': self.description,
         }
