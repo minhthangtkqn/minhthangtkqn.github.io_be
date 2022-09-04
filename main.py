@@ -59,14 +59,13 @@ def handle_flash_card(card_id):
         db.session.commit()
         return {"message": f"Card {card.name} successfully deleted."}
 
-
-if __name__ == '__main__':
-    app.run()
-
-
 @app.route("/")
 def hello():
     return "Hello World!"
+
+
+if __name__ == '__main__':
+    app.run()
 
 
 @app.route("/name/<name>")
